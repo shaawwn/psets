@@ -72,6 +72,7 @@ def profile(request, username):
     Clicking a post should bring up the post itself via JS (Like loading a message in mailbox)
     """
 
+    # If it is the current user's profile page, allow posts to be made via form directly from profile page
     if username == request.user.username:
         print("Username matches")
         form = forms.PostForm
@@ -79,12 +80,11 @@ def profile(request, username):
             "form": form
         })
     else:
-        print("Else", username)
+        # Disable form if profile page is not current user
         current_user = request.user.username
-        profile_username = username
         return render(request, "network/profile.html", {
             "current_user": current_user,
-            "profile_username": profile_username
+            "username": username
         })
 
 
@@ -118,7 +118,6 @@ def create_post(request):
         return JsonResponse({"error": "POST request required."}, status=400)
 
     data = json.loads(request.body)
-    print("request", data, "request.POST: ", request.POST, "request.GET", request.GET)
     body = data.get("body", "")
 
     new_post = Post(
@@ -131,49 +130,27 @@ def create_post(request):
 
 @login_required
 def display_posts(request, url_address):
+    """Display user posts in pages, type of post depends on which page. All displays all user posts, profile
+    displays only the posts by that user, and following displays posts from users that the User is following
+    """
     if url_address == f'{request.user.username}':
         # Display user specific posts (Profile)
-        print("Url address: Request user",request.user.username)
         posts = Post.objects.filter(
             user=request.user
         )
-        posts = posts.order_by("-timestamp").all()
-        return JsonResponse([post.serialize() for post in posts], safe=False)
+
     elif url_address == 'all':
         posts = Post.objects.all()
-        posts = posts.order_by("-timestamp").all()
-        return JsonResponse([post.serialize() for post in posts], safe=False)
-    else:
 
-        # Display Followed User Posts (Following)
+    else:
+        # Display Followed User Posts (Following). Currently WIP, so placeholder All posts.
         user = User.objects.filter(username=url_address)[0]
-        posts = Post.objects.all()
+        # posts = Post.objects.all() # Guess I don't need this, I don't know why it wasn't working earlier then
         posts = Post.objects.filter(
             user=user
         )
-        posts = posts.order_by("-timestamp").all()
-        return JsonResponse([post.serialize() for post in posts], safe=False)
+    # Moved this out of the if-conditionals for streamlining (Should only need to be at the end anyways since it is same for all conditions.)
+    posts = posts.order_by("-timestamp").all()
+    return JsonResponse([post.serialize() for post in posts], safe=False)
 
-# @login_required
-# def mailbox(request, mailbox):
-
-#     # Filter emails returned based on mailbox
-#     if mailbox == "inbox":
-#         emails = Email.objects.filter(
-#             user=request.user, recipients=request.user, archived=False
-#         )
-#     elif mailbox == "sent":
-#         emails = Email.objects.filter(
-#             user=request.user, sender=request.user
-#         )
-#     elif mailbox == "archive":
-#         emails = Email.objects.filter(
-#             user=request.user, recipients=request.user, archived=True
-#         )
-#     else:
-#         return JsonResponse({"error": "Invalid mailbox."}, status=400)
-
-#     # Return emails in reverse chronologial order (This also gets the emails associated with the user from the DB, and serializes them to JSON)
-#     emails = emails.order_by("-timestamp").all()
-#     return JsonResponse([email.serialize() for email in emails], safe=False) # Each email is serialized to a JSON object readable by JS
 

@@ -4,18 +4,23 @@
 {% block body %}
     <h1 class="page-h1">All Posts</h1>
     <div id="post-form-container">
-        <form id="post-form">
-            <div class="form-group post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <input type="submit" class="btn btn-primary" id="post-submit">
-            </div>
-        </form>
 
-        <h1>Posts Here</h1> 
-        <div id="all-post-container">
-            
-        </div>        
+        {% if user.is_authenticated %}
+            <form id="post-form">
+                <div class="form-group post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" class="btn btn-primary" id="post-submit">
+                </div>
+            </form>
+
+            <h1>Posts Here</h1> 
+            <div id="all-post-container">
+                
+            </div>
+        {% else %}
+            <h2>Please log into view and create posts!</h2>
+        {% endif %}        
     </div>
 
 
