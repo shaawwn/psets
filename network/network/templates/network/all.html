@@ -1,0 +1,26 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h1 class="page-h1">All Posts</h1>
+    <div id="post-form-container">
+        <form id="post-form">
+            <div class="form-group post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" class="btn btn-primary" id="post-submit">
+            </div>
+        </form>
+
+        <h1>Posts Here</h1> 
+        <div id="all-post-container">
+            
+        </div>        
+    </div>
+
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/scripts.js' %}"></script>
+{% endblock %}

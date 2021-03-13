@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>Test</title>
+        <script>
+            let counter = 0;
+            function count() {
+                counter++;
+                document.querySelector('h1').innerHTML = counter;
+                
+                if (counter % 10 === 0) {
+                    alert("Reached maximum count")
+                };
+            }
+
+            document.addEventListener("DOMContentLoaded", function() {
+                document.querySelector('button').onclick = count;
+            })
+
+
+        </script>
+    <body>
+        <h1>0</h1>
+        <button>Count</button>
+    </body>
+    
+    </head>
+</html>

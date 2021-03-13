@@ -1,0 +1,37 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <div id="profile-container">
+        <div id="profile-info">
+            <h3>My profile</h3>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+        </div>
+
+        <div id="profile-post-container">
+            {% if current_user == profile_username%}
+                <div id="profile-post-form-container">
+                    <form id="post-form">
+                        <div class="form-group post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <input type="submit" class="btn btn-primary" id="post-submit">
+                        </div>
+                    </form>
+                </div>
+            {% else %}
+                {{ empty }}
+
+            {% endif %}
+            <div id="all-post-container">
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/scripts.js' %}"></script>
+{% endblock %}
