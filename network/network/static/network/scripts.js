@@ -61,85 +61,35 @@ function profile() {
     fetch(`posts/${profile_id}`)
     .then(response => response.json())
     .then(post => {
-    const container = document.createElement('div')
-    container.setAttribute('id', 'post-container')
-    document.querySelector('#all-post-container').append(container)
-    if (post != undefined) {
-        let numPosts = post.length;
-        for (let counter = 0; counter < numPosts; counter++) {
-            const div = document.createElement('div');
-            div.setAttribute('class', 'post-item')
 
-            let post_content = `${post[counter].user} ${post[counter].body} ${post[counter].timestamp}`
-            div.innerHTML = post_content
-            document.querySelector('#post-container').append(div)
-        }
-    } else {
-        document.querySelector('#all-posts-container').innerHTML = 'No posts to display'
-    }
+        // Get user id (Can move code from function directly here if bugs happen)
+        const user_id = get_user(post)
+        console.log(user_id)
+        display_box(post, user_id)
     })
 }
 
 
 function all() {
-    // Load only the posts made by the profile's user
+    // Load only the posts made by the profile's user Load all posts?
     fetch('posts/all')
     .then(response => response.json())
     .then(post => {
-    const container = document.createElement('div')
-    container.setAttribute('id', 'post-container')
-    document.querySelector('#all-post-container').append(container)
-    if (post != undefined) {
-        let numPosts = post.length;
-        for (let counter = 0; counter < numPosts; counter++) {
-
-            // Create a box to hold posts
-            const div = document.createElement('div');
-            div.setAttribute('class', 'post-item');
-
-            const div_post = document.createElement('div');
-            div_post.innerHTML = `${post[counter].body} ${post[counter].timestamp}`;
-            
-            // Create a link from a username to direct to user's profile
-            const a = document.createElement('a');
-            a.setAttribute('class', 'profile-link');
-            a.href=`profile/${post[counter].user}`
-            a.innerHTML = `${post[counter].user}`;
-
-            // Add elements to container
-            div.append(a)
-            div.append(div_post);
-            document.querySelector('#post-container').append(div)
-        }
-    } else {
-        document.querySelector('#all-posts-container').innerHTML = 'No posts to display'
-    }
-    })
+        const user_id = get_user(post)
+        display_box(post, user_id);
+})
 }
 
-function display_post() {
-    console.log("Displaying posts...")
-    fetch('posts/all_posts')
-    .then(response => response.json())
-    .then(post => {
-    const container = document.createElement('div')
-    container.setAttribute('id', 'post-container')
-    document.querySelector('#all-post-container').append(container)
-    if (post != undefined) {
-        let numPosts = post.length;
-        for (let counter = 0; counter < numPosts; counter++) {
-            const div = document.createElement('div');
-            div.setAttribute('class', 'post-item')
+// function display_post() {
+    // I think this is obsolete, but don't delete yet
+//     console.log("Displaying posts...")
+//     fetch('posts/all_posts')
+//     .then(response => response.json())
+//     .then(post => {
+//         display_box(post);
+//     })
+// }
 
-            let post_content = `${post[counter].user} ${post[counter].body} ${post[counter].timestamp}`
-            div.innerHTML = post_content
-            document.querySelector('#post-container').append(div)
-        }
-    } else {
-        document.querySelector('#all-posts-container').innerHTML = 'No posts to display'
-    }
-    })
-}
 
 
 function load_page(page) {
@@ -162,6 +112,68 @@ function load_page(page) {
     }
 }
 
+
+function display_box(post, username) {
+    // Manages the creation of user post containers, and fills containers using data from post request
+    console.log("Displaybox username: ", username)
+    const container = document.createElement('div')
+    container.setAttribute('id', 'post-container')
+    document.querySelector('#all-post-container').append(container)
+
+    if (post != undefined) {
+        let numPosts = post.length;
+        for (let counter = 0; counter < numPosts; counter++) {
+            const div = document.createElement('div');
+            div.setAttribute('class', 'post-item')
+            
+            // Container for post body
+            const div_post = document.createElement('div');
+            div_post.innerHTML = `${post[counter].body} ${post[counter].timestamp}`
+
+            // Link for poster's profile
+            const a = document.createElement('a');
+            a.setAttribute('class', 'profile-link');
+            a.href=`profile/${post[counter].user}`;
+            a.innerHTML = `${post[counter].user}`;
+
+            // If a post is by current user, add edit button
+            if (username == `${post[counter].user}`) {
+                const button = document.createElement('button')
+                button.setAttribute('class', 'edit-button')
+                button.setAttribute('value', 'edit');
+            }
+
+            // Add post elements to post container
+            div.append(a);
+            div.append(div_post)
+
+            // If a post is by current user, add edit button
+            if (username == `${post[counter].user}`) {
+                const button = document.createElement('button')
+                button.setAttribute('class', 'edit-button')
+                button.setAttribute('value', 'Edit')
+                button.innerHTML = 'Edit'
+                div.append(button)
+            }
+
+            document.querySelector('#post-container').append(div)
+        }
+    } else {
+        document.querySelector('#all-posts-container').innerHTML = 'No posts to display'
+    }
+    return container;
+}
+
+
+function get_user(post) {
+    const user_id = JSON.parse(document.getElementById('user_id').textContent);
+    return user_id
+}
+
+
+function edit_post() {
+    // When users click the edit button, load a textarea populated with the current content and allow users to edit content
+}
 
 function following() {
     document.querySelector('#following-view').style.display = 'block';

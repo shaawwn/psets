@@ -21,7 +21,8 @@ body {
 
 #all-post-container {
     /* position: relative; */
-    background-color: rgb(253, 226, 230);
+    /* background-color: rgb(253, 226, 230); */
+    background-color: greenyellow;
     border-radius: 5px;
     padding: 3px;
     margin: 10px;
@@ -100,6 +101,7 @@ body {
 }
 
 .post-item {
+    position: relative;
     margin: 5px;
     padding: 5px;
 }
@@ -107,4 +109,17 @@ body {
 .profile-link {
     text-decoration: underline;
     color: black;
+}
+
+.edit-button {
+    position: absolute;
+    font-size: x-small;
+    right: 5px;
+    top: 5px;
+    width:40px;
+    height:25px;
+    background-color: #007bff;
+    border-radius: 5px;
+    border: 0px;
+    color: white;
 }

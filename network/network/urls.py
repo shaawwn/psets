@@ -11,7 +11,7 @@ urlpatterns = [
     path("profile/<str:username>", views.profile, name="profile"),
     path("following", views.following, name="following"),
     path("all", views.all, name="all"),
-    # path("profile/<str:username>", views.profile, name="user_profiles"),
+    path("react", views.react, name="react"),
 
     # API ROUTES
     path("posts", views.create_post, name="posts"),

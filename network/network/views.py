@@ -67,21 +67,29 @@ def register(request):
         return render(request, "network/register.html")
 
 
+def react(request):
+    """Test react page"""
+    form = forms.PostForm
+    return render(request, "network/react.html", {
+        "form": form
+    })
+
+
 def profile(request, username):
     """Load a users profile, where their profile information will be displayed, as well as any posts they have made.
     Clicking a post should bring up the post itself via JS (Like loading a message in mailbox)
     """
-
+    current_user = request.user.username
     # If it is the current user's profile page, allow posts to be made via form directly from profile page
-    if username == request.user.username:
-        print("Username matches")
+    if username == current_user:
         form = forms.PostForm
         return render(request, "network/profile.html", {
-            "form": form
+            "form": form,
+            "username": username
         })
     else:
         # Disable form if profile page is not current user
-        current_user = request.user.username
+        # current_user = request.user.username
         return render(request, "network/profile.html", {
             "current_user": current_user,
             "username": username
@@ -128,7 +136,7 @@ def create_post(request):
     return JsonResponse({"message": "Post successfully uploaded"}, status=201)
 
 
-@login_required
+# @login_required ### Turning this off/on changes whether posts will display if logged in or not (Keep posts displayed even if not logged in)
 def display_posts(request, url_address):
     """Display user posts in pages, type of post depends on which page. All displays all user posts, profile
     displays only the posts by that user, and following displays posts from users that the User is following
@@ -152,5 +160,4 @@ def display_posts(request, url_address):
     # Moved this out of the if-conditionals for streamlining (Should only need to be at the end anyways since it is same for all conditions.)
     posts = posts.order_by("-timestamp").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
-
 

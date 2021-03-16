@@ -32,5 +32,6 @@
 {% endblock %}
 
 {% block script %}
+    {{ request.user.username|json_script:"user_id" }}
     <script src="{% static 'network/scripts.js' %}"></script>
 {% endblock %}
