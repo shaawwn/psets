@@ -6,7 +6,8 @@ class User(AbstractUser):
     """User information, including Username, email, and password
     included as part of AbstractUser
     """
-    # pass
+    pass
+
 
 
 class Post(models.Model):
@@ -29,7 +30,7 @@ class Post(models.Model):
             "liked": self.liked
         }
 
-class Following(models.Model):
+class Profile(models.Model):
     """A user may add another user to their Following list. Followed users will
     have their posts displayed in a different section than the 'All Posts' section
     included as the 'Following' link on the navbar"""
@@ -37,7 +38,20 @@ class Following(models.Model):
     # Aside from allowing a user to 'Follow' other users, users that are Followed
     # should have the number of Followers be visible on their profile page.
         # ManyToMany and relational_name, 'follower', 'followed'
-    pass
+    profile_name = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="+")
+    following = models.ManyToManyField(User, blank=True, related_name="following")
+    followed = models.ManyToManyField(User, blank=True, related_name="followed_by")
+
+    def serialize(self):
+        return{
+            "profile_name": self.profile_name.username,
+            "following": self.following,
+            "followed_by": self.followed
+        }
+
+    def __str__(self):
+        return f"{self.profile_name} {self.following}"
+
 
 
 '''

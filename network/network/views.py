@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from . import forms
 
-from .models import User, Post
+from .models import User, Post, Profile
 
 
 def index(request):
@@ -62,6 +62,12 @@ def register(request):
                 "message": "Username already taken."
             })
         login(request, user)
+
+        # Create user profile (to allow for following)
+        profile = Profile()
+        profile.profile_name = user
+        profile.save()
+        print(profile)
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
@@ -160,4 +166,30 @@ def display_posts(request, url_address):
     # Moved this out of the if-conditionals for streamlining (Should only need to be at the end anyways since it is same for all conditions.)
     posts = posts.order_by("-timestamp").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
+
+
+@csrf_exempt
+@login_required
+def follow(request, profile_name):
+    username = request.user.username
+    user = User.objects.get(username=username) # Filter or get? See above
+    to_follow = User.objects.get(username=profile_name)
+    following = Profile.objects.get(
+        profile_name = user
+    )
+
+    if to_follow in following.following.all():
+        print("Unfollowing", to_follow.username)
+        following.following.remove(to_follow)
+        print(following.following.all())
+        return JsonResponse({'message': "Unfollowed"})
+    else:
+        print("Following user", to_follow.username)
+        following.following.add(to_follow)
+        following.save()
+        print(following.following.all())
+        
+        return JsonResponse({"message": "User followed"}, status=201)
+
+
 

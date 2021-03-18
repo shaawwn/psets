@@ -5,6 +5,12 @@
     <div id="profile-container">
         <div id="profile-info">
             <h3>My profile</h3>
+            {% if current_user != profile_username %}
+                {% csrf_token %}
+                <button class="follow-button" onclick=follow()>Follow User</button>
+            {% else %}
+                {{ empty }}
+            {% endif %}
             <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
             </p>

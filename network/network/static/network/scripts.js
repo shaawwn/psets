@@ -36,6 +36,45 @@ function post() {
     }
 }
 
+// function follow() {
+//     // Follow a user with the click of a button!
+//     console.log("Follow button pressed!")
+//     profile_id = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1)
+
+//     fetch(`/follow`)
+//     .then(response => response.json())
+//     .then(profile => {
+//         console.log("Inside fetch, profile: ", profile)
+//         if (profile.following === profile_id) {
+//             fetch('/follow', {
+//                 method: 'POST',
+//                 following: false
+//             })
+//         } else {
+//             console.log("Inside else", profile)
+//             fetch('/follow', {
+//                 method: 'POST', 
+//                 following: profile_id,
+//                 }
+//         )
+//     }
+//     console.log("Enf of loop", profile)
+//     })
+
+// }
+
+
+function follow() {
+    profile_id = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1)
+
+    fetch(`/follow/${profile_id}`)
+    .then(response => response.json())
+    .then(profile => {
+        return;
+    })
+}
+
+
 function display_posts(page) {
 
     if (page.includes('/profile')) {
@@ -67,6 +106,9 @@ function profile() {
         console.log(user_id)
         display_box(post, user_id)
     })
+    if (document.querySelector('follow-button')) {
+        document.querySelector('follow-button').onclick = follow
+    }
 }
 
 
