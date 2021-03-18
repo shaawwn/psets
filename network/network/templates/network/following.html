@@ -3,8 +3,20 @@
 
 {% block body %}
     <h1 class="page-h1">Following</h1>
+    <div id="post-form-container">
+
+        {% if user.is_authenticated %}
+
+            <div id="all-post-container">
+                
+            </div>
+        {% else %}
+            <h2>Please log into create posts!</h2>
+        {% endif %}        
+    </div>
 {% endblock %}
 
 {% block script %}
+    {{ request.user.username|json_script:"user_id" }}
     <script src="{% static 'network/scripts.js' %}"></script>
 {% endblock %}

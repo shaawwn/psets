@@ -5,12 +5,20 @@
     <div id="profile-container">
         <div id="profile-info">
             <h3>My profile</h3>
-            {% if current_user != profile_username %}
-                {% csrf_token %}
-                <button class="follow-button" onclick=follow()>Follow User</button>
-            {% else %}
-                {{ empty }}
-            {% endif %}
+            <form action="" method="post">
+                {% if current_user != profile_username %}
+                    {% csrf_token %}
+                    {% if watching == True %}
+                        <input type="submit" value="Unfollow" class="input-follow">
+                        <!-- <button class="follow-button" onclick=follow()>Unfollow User</button> -->
+                    {% else %}
+                        <input type="submit" value="Follow" class="input-follow">
+                        <!-- <button class="follow-button" onclick=follow()>Follow User</button> -->
+                    {% endif %}
+                {% else %}
+                    {{ empty }}
+                {% endif %}
+            </form>
             <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
             </p>

@@ -36,33 +36,6 @@ function post() {
     }
 }
 
-// function follow() {
-//     // Follow a user with the click of a button!
-//     console.log("Follow button pressed!")
-//     profile_id = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1)
-
-//     fetch(`/follow`)
-//     .then(response => response.json())
-//     .then(profile => {
-//         console.log("Inside fetch, profile: ", profile)
-//         if (profile.following === profile_id) {
-//             fetch('/follow', {
-//                 method: 'POST',
-//                 following: false
-//             })
-//         } else {
-//             console.log("Inside else", profile)
-//             fetch('/follow', {
-//                 method: 'POST', 
-//                 following: profile_id,
-//                 }
-//         )
-//     }
-//     console.log("Enf of loop", profile)
-//     })
-
-// }
-
 
 function follow() {
     profile_id = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1)
@@ -78,7 +51,6 @@ function follow() {
 function display_posts(page) {
 
     if (page.includes('/profile')) {
-        console.log("Loading profile page: ", page)
         profile();
         return;
     }
@@ -86,7 +58,7 @@ function display_posts(page) {
         all();
         return;
     }
-    if (page == 'http://127.0.0.1:8000/following') {
+    if (page == '/following') {
         following();
         return;
     }
@@ -122,6 +94,15 @@ function all() {
 })
 }
 
+function following() {
+    // Load only posts from users that a user is folowing
+    fetch('posts/following')
+    .then(response => response.json())
+    .then(post => {
+        const user_id = get_user(post)
+        display_box(post, user_id)
+    })
+}
 // function display_post() {
     // I think this is obsolete, but don't delete yet
 //     console.log("Displaying posts...")
@@ -134,25 +115,25 @@ function all() {
 
 
 
-function load_page(page) {
-    document.querySelector('#profile-view').style.display = 'block';
-    console.log("loading page from load_page()")
-    // Load page depending on Page parameter
-    if (page === 'profile') {
-        profile();
-        return;
-    }
+// function load_page(page) {
+//     document.querySelector('#profile-view').style.display = 'block';
+//     console.log("loading page from load_page()")
+//     // Load page depending on Page parameter
+//     if (page === 'profile') {
+//         profile();
+//         return;
+//     }
 
-    if (page === 'following') {
-        following();
-        return;
-    }
+//     if (page === 'following') {
+//         following();
+//         return;
+//     }
 
-    if (page === 'all-posts') {
-        all_posts();
-        return;
-    }
-}
+//     if (page === 'all-posts') {
+//         all_posts();
+//         return;
+//     }
+// }
 
 
 function display_box(post, username) {
@@ -170,6 +151,7 @@ function display_box(post, username) {
             
             // Container for post body
             const div_post = document.createElement('div');
+            div_post.setAttribute('class', 'post-body')
             div_post.innerHTML = `${post[counter].body} ${post[counter].timestamp}`
 
             // Link for poster's profile
@@ -217,11 +199,11 @@ function edit_post() {
     // When users click the edit button, load a textarea populated with the current content and allow users to edit content
 }
 
-function following() {
-    document.querySelector('#following-view').style.display = 'block';
-    document.querySelector('#profile-view').style.display = 'none';
-    document.querySelector('#all-posts-view').style.display = 'none';
-}
+// function following() {
+//     document.querySelector('#following-view').style.display = 'block';
+//     document.querySelector('#profile-view').style.display = 'none';
+//     document.querySelector('#all-posts-view').style.display = 'none';
+// }
 
 
 function all_posts() {

@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from network.models import Post
+from network.models import Post, Profile
 
 
 
@@ -20,6 +20,19 @@ class PostForm(ModelForm):
             'body': forms.Textarea(attrs={'class': 'form-control body', 'rows': '3', 'columns': '15'})
         }
 
+
+# class FollowForm(ModelForm):
+#     class Meta:
+#         model = Following
+#         fields = [
+
+#         ]
+
+#         labels = None
+
+#         widgets = {
+            
+#         }
 
 # class AuctionListingForm(ModelForm):
 #     class Meta:
