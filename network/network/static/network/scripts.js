@@ -104,37 +104,6 @@ function following() {
         display_box(post, user_id)
     })
 }
-// function display_post() {
-    // I think this is obsolete, but don't delete yet
-//     console.log("Displaying posts...")
-//     fetch('posts/all_posts')
-//     .then(response => response.json())
-//     .then(post => {
-//         display_box(post);
-//     })
-// }
-
-
-
-// function load_page(page) {
-//     document.querySelector('#profile-view').style.display = 'block';
-//     console.log("loading page from load_page()")
-//     // Load page depending on Page parameter
-//     if (page === 'profile') {
-//         profile();
-//         return;
-//     }
-
-//     if (page === 'following') {
-//         following();
-//         return;
-//     }
-
-//     if (page === 'all-posts') {
-//         all_posts();
-//         return;
-//     }
-// }
 
 
 function display_box(post, username) {
@@ -236,8 +205,6 @@ function edit_post(id) {
         to_replace.setAttribute('class', 'post-body')
         to_replace.innerHTML = edit_text.value
         post_body.replaceChild(to_replace, edit_text)
-    
-        // Replace old text with new text
     })
     return false;
 }
@@ -264,20 +231,13 @@ function getCookie(name) {
 }
 
 
-    // When users click the edit button, load a textarea populated with the current content and allow users to edit content
- 
-
-
 function edit_text() {
     document.querySelector('.post-body').style.display = 'none';
     const text_edit = document.createElement('textarea')
     text_edit.innerHTML = document.querySelector('post-body').innerHTML
 }
-// function following() {
-//     document.querySelector('#following-view').style.display = 'block';
-//     document.querySelector('#profile-view').style.display = 'none';
-//     document.querySelector('#all-posts-view').style.display = 'none';
-// }
+
+
 
 
 function all_posts() {
