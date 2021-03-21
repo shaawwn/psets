@@ -38,8 +38,32 @@
             {% else %}
                 {{ empty }}
             {% endif %}
-            <div id="all-post-container">
+            <!-- <div id="all-post-container">
 
+            </div> -->
+
+            <!-- PAGINATION FROM HERE -->
+            <div class="pagination-body">
+                {% for post in page_obj.object_list %}
+                    <div class="post-item">
+
+                        <a href="profile/{{ post.user }}">{{ post.user }}</a>
+                        <div class="post-body">{{ post.body }} {{ post.timestamp }}</div>
+                        {% if user.is_authenticated %}
+                            <button class="edit-button" value="Edit">Edit</button>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                    <!-- PAGINATION USING DJANGO -->
+                <div class="page-links">
+                    {% if page_obj.has_previous %}
+                        <a href="{% url 'all' %}?page={{ page_obj.previous_page_number }}">Previous Page</a>
+                    {% endif %}
+                    {% if page_obj.has_next %}
+                        <a href="{% url 'all' %}?page={{ page_obj.next_page_number }}">Next Page</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

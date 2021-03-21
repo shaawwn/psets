@@ -101,6 +101,8 @@ body {
 }
 
 .post-item {
+    display: flex;
+    flex-direction: column;
     position: relative;
     margin: 5px;
     padding: 5px;
@@ -146,4 +148,11 @@ body {
     border-radius: 5px;
     border: 0px;
     color: white;
+}
+
+.pagination-body {
+    background-color: greenyellow;
+    border-radius: 5px;
+    padding: 3px;
+    margin: 10px;
 }

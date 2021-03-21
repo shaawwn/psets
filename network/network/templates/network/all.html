@@ -15,25 +15,35 @@
             </form>
 
             <h1>Posts Here</h1> 
-            <div id="all-post-container">
+            <!-- JS CREATED POST LIST HERE -->
+            <!-- <div id="all-post-container">  -->
 
-                    <!-- <div class="pagination">
-                        <span class="step-links">
-                            {% if page_obj.has_previous %}
-                                <a href="?page=1">&laquo; first</a>
-                                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-                            {% endif %}
 
-                            <span class="current">
-                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                            </span>
+            <!-- </div> -->
 
-                            {% if page_obj.has_next %}
-                                <a href="?page={{ page_obj.next_page_number }}">next</a>
-                                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-                            {% endif %}
-                        </span>
-                    </div> -->
+            <!-- DJANGO CREATED POST LIST INCLUDING PAGINATION -->
+            <div class="pagination-body">
+                {% for post in page_obj.object_list %}
+                    <div class="post-item" id="post-body {{ post.id }}">
+                        <a href="profile/{{ post.user }}">{{ post.user }}</a>
+                        <div class="post-body" id="post {{ post.id }}">{{ post.body }}</div>
+                        <div>{{ post.timestamp }}</div>
+                        <!-- Put edit button here if all else fails -->
+                        {% if request.user == post.user %}
+                            <button id="{{ post.id }}" class="edit-button" value="Edit" onClick="edit_post(this.id)">Edit</button>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                    <!-- PAGINATION USING DJANGO -->
+                <div class="page-links">
+                    {% if page_obj.has_previous %}
+                        <a href="{% url 'all' %}?page={{ page_obj.previous_page_number }}">Previous Page</a>
+                    {% endif %}
+                    {% if page_obj.has_next %}
+                        <a href="{% url 'all' %}?page={{ page_obj.next_page_number }}">Next Page</a>
+                    {% endif %}
+                </div>
             </div>
         {% else %}
             <h2>Please log into create posts!</h2>

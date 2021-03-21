@@ -113,20 +113,35 @@ def profile(request, username):
 
     current_user = request.user.username
     # If it is the current user's profile page, allow posts to be made via form directly from profile page
+
+    # PAGINATION 
+
+
     if username == current_user:
         form = forms.PostForm
+        p = pagination(request, request.user.username)
+        print("REQUEST.USER", request.user,username)
+        p, posts, page_object, page_number = p[0], p[1], p[2], p[3]
         return render(request, "network/profile.html", {
             "form": form,
-            "username": username
+            "username": username,
+            "count": p.count,
+            "page_obj": page_object,
+            "posts": posts
         })
     else:
         # Disable form if profile page is not current user
         # current_user = request.user.username
         # Determine if a user is followed or not, and change the text in the Follow button to reflect (Follow, Unfollow)
+        p = pagination(request, username)
+        p, posts, page_object, page_number = p[0], p[1], p[2], p[3]
         return render(request, "network/profile.html", {
             "current_user": current_user,
             "username": username,
-            "watching": watching
+            "watching": watching,
+            "count": p.count,
+            "page_obj": page_object,
+            "posts": posts
         })
 
 
@@ -139,7 +154,13 @@ def following(request):
     """Load the page displaying the posts form users that a User is following, visually identical to all_posts(), except restricted
     to only users that are being followed.  Posts should be clicked to bring up a detailed view with JS (like loading a message in mailbox)
     """
-    return render(request, "network/following.html")
+    p = pagination(request, 'following')
+    p, posts, page_object, page_number = p[0], p[1], p[2], p[3]
+    return render(request, "network/following.html", {
+        "count": p.count,
+        "page_obj": page_object,
+        "posts": posts
+    })
 
 
 def all(request):
@@ -147,15 +168,47 @@ def all(request):
     As profile() and following(), clicking on a post should bring up a detailed view similar to loading a message in mailbox project.
     """
     form = forms.PostForm
-    posts = Post.objects.all()
-    # Pagination
-    p = Paginator(posts, 10)
-    page_number = request.GET.get('page')
-    page_obj = p.get_page(page_number)
+
+    p = pagination(request)
+    p, posts, page_object, page_number = p[0], p[1], p[2], p[3]
+
     return render(request, "network/all.html", {
         "form": form,
-        "page_obj": page_obj
+        "count": p.count,
+        "page_obj": page_object,
+        "posts": posts
     })
+
+
+def pagination(request, user=None):
+    current_user = User.objects.get(username=request.user)
+
+    if user == request.user.username:
+        posts = Post.objects.filter(user=current_user)
+    elif user == 'following':
+        print("CURENT USER", current_user)
+        user_info = Profile.objects.get(profile_name=current_user)
+        following = user_info.following.all()
+        # Parse the followed users posts
+        posts = Post.objects.none()
+        for user in following:
+            print("Posts in loop", posts, user)
+            user_posts = Post.objects.filter(
+                user=user
+            )
+            posts = posts.union(user_posts)
+    elif user != None and user != request.user.username:
+        profile_user = User.objects.get(username=user)
+        posts = Post.objects.filter(user=profile_user)
+
+    else:
+        posts = Post.objects.all()
+        
+    posts = posts.order_by('-timestamp').all()
+    p = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_object = p.get_page(page_number)
+    return p, posts, page_object, page_number
 
 
 @csrf_exempt
@@ -213,7 +266,9 @@ def display_posts(request, url_address):
 
     else:
         # Display Followed User Posts (Following). Currently WIP, so placeholder All posts.
+        print("USER OBJECTS ", url_address)
         user = User.objects.filter(username=url_address)[0]
+        print("INDEX ERROR", user)
         # posts = Post.objects.all() # Guess I don't need this, I don't know why it wasn't working earlier then
         posts = Post.objects.filter(
             user=user
@@ -222,6 +277,39 @@ def display_posts(request, url_address):
     posts = posts.order_by("-timestamp").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
 
+
+
+@login_required
+def get_post(request, post_id):
+    """Get an individual post"""
+    if request.method == 'PUT':
+        print("REQUEST == PUT!")
+        data = json.loads(request.body)
+        body = data.get("body", "")
+        print("DATA/BODY", data, body)
+
+        # Get the original post
+        post = Post.objects.get(id=post_id)
+        post.body = body
+        post.save()
+        return JsonResponse({"message": "Post successfully updated"}, status=201)
+    else:
+        post = Post.objects.get(id=post_id)
+        print(post.body)
+        return JsonResponse(post.serialize(), safe=False)
+
+
+# if request.method != "POST":
+#         return JsonResponse({"error": "POST request required."}, status=400)
+
+#     data = json.loads(request.body)
+#     body = data.get("body", "")
+
+#     new_post = Post(
+#         user=request.user,
+#         body=body
+#     )
+#     new_post.save()
 
 @csrf_exempt
 @login_required
